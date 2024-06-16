@@ -37,11 +37,12 @@ module.exports = passport => {
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/auth/google/callback',
+        callbackURL: '/api/auth/google/callback',
         passReqToCallback   : true
     },
     function(request, accessToken, refreshToken, profile, done) {
-      User.findOne( {googleId: profile.id}, function (err, user) {
+      console.log(profile)
+      User.findOne({googleId: profile.id}).then(user => {
         if(user){
           const payload = { id: user.id, name: user.name, avatar: user.avatar };
           // Sign the Token
@@ -55,7 +56,7 @@ module.exports = passport => {
           newUser.name  = profile.displayName;
           newUser.avatar = profile.picture;
           newUser.googleId = profile.id;
-          newUser.email = profile.email[0];
+          newUser.email = profile.email;
           newUser.save()
             .then(user => {
                 const payload = { id: user.id, name: user.name, avatar: user.avatar };
@@ -67,7 +68,8 @@ module.exports = passport => {
                 });
             })
           }
-      });
+
+      })
     }
   ));
 }

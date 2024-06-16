@@ -23,14 +23,14 @@ app.use(bodyParser.json());
 const db = process.env.localURI;
 
 // Connect to the mongodb
-mongoose.connect(process.env.mongoURI || db, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(db || process.env.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log(err));
 
-// // Passport Middleware
-// app.use(passport.initialize());
-// // Passport Config
-// require('./config/passport')(passport);
+// Passport Middleware
+app.use(passport.initialize());
+// Passport Config
+require('./config/passport')(passport);
 
 // Use Routes
 app.use('/api/auth', auth);

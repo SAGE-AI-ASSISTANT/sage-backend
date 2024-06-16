@@ -8,6 +8,8 @@ dotenv.config();
 
 // Load Input Validation
 const validateRegisterInput = require('../../validation/register')
+const validateLoginInput = require('../../validation/login')
+
 
 // Load User Model
 const User = require('../../models/User');
@@ -65,48 +67,48 @@ router.post('/register', (req, res) => {
 // @route   POST api/auth/login
 // @desc    Login User / Return JWT Token
 // @access  public
-// router.post('/login', (req, res) => {
-//     // Validate the inputs
-//     const {errors, isValid} = validateLoginInput(req.body);
-//     // Check Validation Errors
-//     if (!isValid) {
-//         return res.status(400).json({errors}); //.status(404)
-//     }
+router.post('/login', (req, res) => {
+    // Validate the inputs
+    const {errors, isValid} = validateLoginInput(req.body);
+    // Check Validation Errors
+    if (!isValid) {
+        return res.status(400).json({errors}); 
+    }
 
-//     const {email, password} = req.body;
+    const {email, password} = req.body;
 
-//     // Find user by email
-//     User.findOne({email})
-//         .then(user => {
-//             // check for user
-//             if (!user) {
-//                 errors.email = 'Email not found';
-//                 return res.status(404).json({errors});
-//             }
+    // Find user by email
+    User.findOne({email})
+        .then(user => {
+            // check for user
+            if (!user) {
+                errors.email = 'Email not found';
+                return res.status(404).json({errors});
+            }
 
-//             //check Password
-//             bcrypt.compare(password, user.password)
-//                 .then(isMatch => {
-//                     if (isMatch) {
-//                         // User Matched
-//                         // Create the payload
-//                         const payload = { id: user.id, name: user.name, avatar: user.avatar, status: user.status };
-//                         // Sign the Token
-//                         // expires in one week
-//                         jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {
-//                             res.json({
-//                                 reply: 'Success',
-//                                 token: 'Bearer ' + token
-//                             })
-//                         });
-//                     } else {
-//                         errors.password = 'Password not correct';
-//                         return res.status(400).json({errors});
-//                     }
-//                 })
-//                 .catch(err => console.log(err));
-//         })
-// })
+            //check Password
+            bcrypt.compare(password, user.password)
+                .then(isMatch => {
+                    if (isMatch) {
+                        // User Matched
+                        // Create the payload
+                        const payload = { id: user.id, name: user.name, avatar: user.avatar, status: user.status };
+                        // Sign the Token
+                        // expires in one week
+                        jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {
+                            res.json({
+                                reply: 'Success',
+                                token: 'Bearer ' + token
+                            })
+                        });
+                    } else {
+                        errors.password = 'Password not correct';
+                        return res.status(400).json({errors});
+                    }
+                })
+                .catch(err => console.log(err));
+        })
+})
 
 
 

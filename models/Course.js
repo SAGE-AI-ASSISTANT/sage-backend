@@ -16,7 +16,8 @@ const CourseSchema = new Schema({
         required: true,
     },
     files: [{
-        type: String,
+        path: {type: String},
+        name: {type: String}
     }],
     date: {
         type: Date,

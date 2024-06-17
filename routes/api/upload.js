@@ -23,8 +23,7 @@ router.get('/test', passport.authenticate('jwt', { session: false }), (req, res)
 router.post('/doc', passport.authenticate('jwt', { session: false }), (req, res, ) => {
     uploadFiles(req, res, (err) => {
         if (err) {
-            console.log(err);
-            return res.status(400).json({ message: err.message })
+            return res.status(400).json({ error: err.message })
         }
 
         return res.json({message: 'File Uploaded', files: req.files.map(file => file.path )})

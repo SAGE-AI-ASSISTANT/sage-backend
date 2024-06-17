@@ -31,7 +31,7 @@ router.post('/register', (req, res) => {
     // Check Validation Errors
 
     if (!isValid) {
-        return res.status(400).json(errors);
+        return res.status(400).json({errors});
     }
 
     User.findOne({email: req.body.email})
@@ -39,15 +39,17 @@ router.post('/register', (req, res) => {
             if(user) {
                 errors.email = 'Email already exists';
                 return res.status(400).json({errors});
+
             } else {
                 // const avatar = gravatar
                 const newUser = new User({
-                    name: req.body.name,
+                    username: req.body.username,
                     email: req.body.email,
                     password: req.body.password,
                     avatar: req.protocol + '://' + req.get('host') + '/images/user_placeholder.png',
                     date: Date.now()
                 });
+
 
                 bcrypt.genSalt(10, (err, salt) => {
                     bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -55,11 +57,13 @@ router.post('/register', (req, res) => {
                         newUser.password = hash;
                         newUser.save()
                             .then(user => {
-                                const payload = { id: user.id, name: user.name, avatar: user.avatar, email: user.email };
+                                console.log('#here');
+                                const payload = { id: user.id, username: user.username, avatar: user.avatar, email: user.email };
                                 // Sign the Token
                                 // expires in one week
                                 jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {
-                                    res.json({
+                                    
+                                    return res.json({
                                         reply: 'Success',
                                         token: 'Bearer ' + token,
                                         user: payload
@@ -101,7 +105,7 @@ router.post('/login', (req, res) => {
                     if (isMatch) {
                         // User Matched
                         // Create the payload
-                        const payload = { id: user.id, name: user.name, avatar: user.avatar, email: user.email };
+                        const payload = { id: user.id, username: user.username, avatar: user.avatar, email: user.email };
                         // Sign the Token
                         // expires in one week
                         jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {

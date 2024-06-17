@@ -9,6 +9,7 @@ dotenv.config();
 
 const auth = require('./routes/api/auth');
 const upload = require('./routes/api/upload');
+const course = require('./routes/api/course');
 
 
 const app = express();
@@ -36,6 +37,7 @@ require('./config/passport')(passport);
 // Use Routes
 app.use('/api/auth', auth);
 app.use('/api/upload', upload);
+app.use('/api/course', course)
 
 app.use(express.static('public'));
 

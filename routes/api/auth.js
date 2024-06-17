@@ -49,7 +49,6 @@ router.post('/register', (req, res) => {
             newUser.password = hash;
             newUser.save()
                 .then(user => {
-                    console.log('#here');
                     const payload = { id: user.id, username: user.username, avatar: user.avatar, email: user.email };
                     // Sign the Token
                     // expires in one week
@@ -75,7 +74,6 @@ router.post('/register', (req, res) => {
                     } else {
                         return res.status(500).json({ error: error.message });
                     }
-
                 });
         });
     });

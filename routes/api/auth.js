@@ -13,6 +13,7 @@ const validateLoginInput = require('../../validation/login')
 
 // Load User Model
 const User = require('../../models/User');
+const { getServerAddress } = require('../../utils/util');
 
 
 
@@ -46,7 +47,7 @@ router.post('/register', (req, res) => {
                     username: req.body.username,
                     email: req.body.email,
                     password: req.body.password,
-                    avatar: req.protocol + '://' + req.get('host') + '/images/user_placeholder.png',
+                    avatar: getServerAddress(req) + '/images/user_placeholder.png',
                     date: Date.now()
                 });
 

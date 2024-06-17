@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const dotenv = require('dotenv');
-const upload = require('../../middlewares/upload');
+const uploadFiles = require('../../middlewares/upload');
+const { getServerAddress } = require('../../utils/util');
 dotenv.config();
 
 
@@ -19,12 +20,17 @@ router.get('/test', passport.authenticate('jwt', { session: false }), (req, res)
 // @route   GET api/upload/test
 // @desc    Tests users route
 // @access  public
-router.post('/doc', 
-    passport.authenticate('jwt', { session: false }), 
-    upload.array('files'), 
-    (req, res) => {
-        console.log(req.files);
-        res.json({msg: 'File Uploaded'})
+router.post('/doc', passport.authenticate('jwt', { session: false }), (req, res, ) => {
+    uploadFiles(req, res, (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(400).json({ message: err.message })
+        }
+
+        return res.json({message: 'File Uploaded', files: req.files.map(file => file.path )})
+
+    })
+            
 
 });
 

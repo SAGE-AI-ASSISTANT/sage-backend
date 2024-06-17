@@ -16,7 +16,7 @@ const fileFilter = (req,file,callback) => {
       return callback(null, true);
     } else {
       //reject file
-      return callback('Unsupported file format', false);
+      return callback(new Error('Unsupported file format'));
     }
 };
 
@@ -26,4 +26,6 @@ const upload = multer({
     fileFilter: fileFilter,
 })
 
-module.exports = upload;
+const uploadFiles = upload.array('files');
+
+module.exports = uploadFiles;

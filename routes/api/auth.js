@@ -55,7 +55,16 @@ router.post('/register', (req, res) => {
                         newUser.password = hash;
                         newUser.save()
                             .then(user => {
-                                res.json(user);
+                                const payload = { id: user.id, name: user.name, avatar: user.avatar, email: user.email };
+                                // Sign the Token
+                                // expires in one week
+                                jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {
+                                    res.json({
+                                        reply: 'Success',
+                                        token: 'Bearer ' + token,
+                                        user: payload
+                                    })
+                                });
                             })
                             .catch(err => console.log(err));
                     });
@@ -92,13 +101,14 @@ router.post('/login', (req, res) => {
                     if (isMatch) {
                         // User Matched
                         // Create the payload
-                        const payload = { id: user.id, name: user.name, avatar: user.avatar, status: user.status };
+                        const payload = { id: user.id, name: user.name, avatar: user.avatar, email: user.email };
                         // Sign the Token
                         // expires in one week
                         jwt.sign(payload, process.env.JWTKey, {expiresIn: 604800}, (err, token) => {
                             res.json({
                                 reply: 'Success',
-                                token: 'Bearer ' + token
+                                token: 'Bearer ' + token,
+                                user: payload
                             })
                         });
                     } else {

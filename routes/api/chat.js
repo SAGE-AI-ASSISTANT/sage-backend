@@ -10,9 +10,8 @@ const User = require('../../models/User');
 const uploadFiles = require('../../middlewares/upload');
 const { getServerAddress } = require('../../utils/util');
 const validateChatInput = require('../../validation/chat');
+const { default: mongoose } = require('mongoose');
 dotenv.config();
-
-
 
 
 // @route   GET api/chat/test
@@ -47,14 +46,6 @@ router.post('/new', passport.authenticate('jwt', { session: false }), async (req
 
     try {
 
-        const newChat = new Chat({
-            title: req.body.title,
-            creator: req.user.id,
-            course: req.body.course,
-            messages: req.body.messages
-        });
-        const savedChat = await newChat.save({session});
-
         const user = await User.findById(req.body.creator).session(session);
         if (!user) {
             await session.abortTransaction();
@@ -69,15 +60,35 @@ router.post('/new', passport.authenticate('jwt', { session: false }), async (req
             return res.status(404).json({ error: 'Course not found' });
         }
 
+        const newChat = new Chat({
+            title: course.title + Date.now(),
+            creator: req.user.id,
+            course: req.body.course,
+            messages: req.body.messages
+        });
+        const savedChat = await newChat.save({session});
+
+        
         course.chats.push(savedChat._id);
-        await user.save({ session });
+        await course.save({ session });
 
         await session.commitTransaction();
         session.endSession();
 
         return res.status(400).json({message: 'success', chat: savedChat})
     } catch(error){
-        res.status(400).json({error: error.message})
+        if (error.code === 11000) {
+            // Handle duplicate key error
+            if (error.keyPattern.course) {
+                return res.status(400).json({ errors: {course: 'Course not found'} });
+            } else if (error.keyPattern.creator) {
+                return res.status(400).json({ errors: {creator: 'Creator not found'} });
+            } else {
+                return res.status(400).json({ error: 'Duplicate key error' });
+            }
+        } else {
+            return res.status(500).json({ error: error.message });
+        }
     }
 
 

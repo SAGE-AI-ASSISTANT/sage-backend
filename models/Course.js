@@ -15,10 +15,10 @@ const CourseSchema = new Schema({
         ref: 'users',
         required: true,
     },
-    chats: {
+    chats: [{
         type: Schema.Types.ObjectId,
-        ref: 'chats'
-    },
+        ref: 'chats',
+    }],
     files: [{
         path: {type: String},
         name: {type: String}
@@ -33,7 +33,7 @@ const CourseSchema = new Schema({
 
 CourseSchema.pre('remove', async function(next) {
     // Delete courses associated with this user
-    await mongoose.model('chats').deleteMany({ _id: { $in: this.chats } });
+    await mongoose.model('Chats').deleteMany({ _id: { $in: this.chats } });
     next();
 });
 

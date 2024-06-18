@@ -16,7 +16,7 @@ dotenv.config();
 // @route   GET api/course/test
 // @desc    Tests course route
 // @access  public
-router.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => res.json({msg: 'Auth Works!'}));
+router.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => res.json({msg: 'Course Works!'}));
 
 // @route   GET api/course/list
 // @desc    Tests courses created by a user
@@ -81,6 +81,7 @@ router.post('/new', passport.authenticate('jwt', { session: false }), (req, res,
 router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
     const { id } = req.params;
     try {
+        //handle deleting of chats linked
         const result = await Course.findOneAndDelete({ _id: id, creator: req.user.id });
         if (result) {
             res.status(200).json({ message: `success`, id});

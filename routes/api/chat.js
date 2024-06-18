@@ -95,14 +95,15 @@ router.post('/new', passport.authenticate('jwt', { session: false }), async (req
     
 });
 
-// @route   DELETE api/course/delete
-// @desc    Delete a Course
+// @route   DELETE api/chat/delete
+// @desc    Delete a Chat
 // @access  public
 router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
     const { id } = req.params;
     try {
         //handle deleting of chats linked
-        const result = await Course.findOneAndDelete({ _id: id, creator: req.user.id });
+        console.log(id, req.user.id);
+        const result = await Chat.findOneAndDelete({ _id: id, creator: req.user.id });
         if (result) {
             res.status(200).json({ message: `success`, id});
         } else {

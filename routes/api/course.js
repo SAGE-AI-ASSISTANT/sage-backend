@@ -23,8 +23,7 @@ router.get('/test', passport.authenticate('jwt', { session: false }), (req, res)
 // @access  public
 router.get('/list', passport.authenticate('jwt', { session: false }), (req, res, ) => {
     const userID = req.user.id;
-
-    Course.find({creator: userID}).sort({ createdAt: -1 }).then(courses => {
+    Course.find({creator: userID}).populate('chats').sort({ createdAt: -1 }).then(courses => {
         return res.status(200).json({message: 'success', courses})
     }).catch(error => res.status(400).json({error: error.message}))
 })

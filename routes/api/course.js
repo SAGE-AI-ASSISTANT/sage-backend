@@ -24,7 +24,7 @@ router.get('/test', passport.authenticate('jwt', { session: false }), (req, res)
 router.get('/list', passport.authenticate('jwt', { session: false }), (req, res, ) => {
     const userID = req.user.id;
 
-    Course.find({creator: userID}).then(courses => {
+    Course.find({creator: userID}).sort({ createdAt: -1 }).then(courses => {
         return res.status(200).json({message: 'success', courses})
     }).catch(error => res.status(400).json({error: error.message}))
 })
@@ -74,6 +74,17 @@ router.post('/new', passport.authenticate('jwt', { session: false }), (req, res,
     
 
 });
+
+// @route   DELETE api/course/delete
+// @desc    Delete a Course
+// @access  public
+router.delete('/delete', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
+    const { id } = req.body;
+    const result = await Course.findByIdAndDelete(id);
+    if(result) return res.status(200).json({message: 'success', id})
+    console.log(result);
+
+})
 
 
 

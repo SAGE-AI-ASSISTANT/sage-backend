@@ -23,6 +23,8 @@ const CourseSchema = new Schema({
         type: Date,
         default: Date.now()
     }
+}, {
+    timestamps: true
 })
 
 const Course = mongoose.model('courses', CourseSchema);

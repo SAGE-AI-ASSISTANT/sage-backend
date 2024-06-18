@@ -78,11 +78,18 @@ router.post('/new', passport.authenticate('jwt', { session: false }), (req, res,
 // @route   DELETE api/course/delete
 // @desc    Delete a Course
 // @access  public
-router.delete('/delete', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
-    const { id } = req.body;
-    const result = await Course.findByIdAndDelete(id);
-    if(result) return res.status(200).json({message: 'success', id})
-    console.log(result);
+router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
+    const { id } = req.params;
+    try {
+        const result = await Course.findOneAndDelete({ _id: id, creator: req.user.id });
+        if (result) {
+            res.status(200).json({ message: `success`, id});
+        } else {
+            res.status(404).json({ error: `Item not found` });
+        }
+    } catch (error) {
+        res.status(500).json({ error: `Error deleting item` });
+    }
 
 })
 

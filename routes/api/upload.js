@@ -17,7 +17,7 @@ dotenv.config();
 // @access  public
 router.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => res.json({msg: 'Auth Works!'}));
 
-// @route   GET api/upload/test
+// @route   GET api/upload/doc
 // @desc    Tests users route
 // @access  public
 router.post('/doc', passport.authenticate('jwt', { session: false }), (req, res, ) => {

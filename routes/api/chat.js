@@ -10,6 +10,7 @@ const User = require('../../models/User');
 const uploadFiles = require('../../middlewares/upload');
 const { getServerAddress } = require('../../utils/util');
 const validateChatInput = require('../../validation/chat');
+const {getGroqChatCompletion} = require("../../config/groq")
 const { default: mongoose } = require('mongoose');
 dotenv.config();
 
@@ -113,6 +114,13 @@ router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), a
         res.status(500).json({ error: `Error deleting item` });
     }
 
+})
+
+router.post('/send', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
+    const {messages} = req.body;
+
+    const data = await getGroqChatCompletion(messages);
+    return res.status(200).json(data)
 })
 
 

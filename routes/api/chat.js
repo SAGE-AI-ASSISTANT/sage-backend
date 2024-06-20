@@ -118,9 +118,14 @@ router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), a
 
 router.post('/send', passport.authenticate('jwt', { session: false }), async (req, res, ) => {
     const {messages} = req.body;
+    try {
+        const data = await getGroqChatCompletion(messages);
+        return res.status(200).json(data)
 
-    const data = await getGroqChatCompletion(messages);
-    return res.status(200).json(data)
+    } catch(error){
+        return res.status(400).json({error: error.message})
+    }
+    
 })
 
 

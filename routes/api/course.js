@@ -32,8 +32,7 @@ router.get('/list', passport.authenticate('jwt', { session: false }), (req, res,
 // @desc    Create a new course
 // @access  public
 router.post('/new', passport.authenticate('jwt', { session: false }), (req, res, ) => {
-    
-
+    // check for the course using the id passed and then fetch the txt content of the files uploaded then parse it, and send it as a command to the user
     uploadFiles(req, res, (err) => {
         if (err) {
             return res.status(400).json({ error: err.message })
